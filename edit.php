@@ -24,18 +24,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update'])) {
     }
 
     // Update data in the database
-    $update_query = "UPDATE recipies SET recipie_name='$title', recipie_description='$description', recipie_image='$image', recipie_category='$category' WHERE recipie_id='$id'";
+    $update_query = "UPDATE recipies SET recipie_name='$title', recipie_description='$description', recipie_image='$image', category_id='$category' WHERE recipie_id='$id'";
 
     if (mysqli_query($con, $update_query)) {
-        // Redirect to index.php after successful update
-        header("Location: index.php");
+        // Redirect to home.php after successful update
+        header("Location: home.php");
         exit();
     } else {
         echo "Error: " . mysqli_error($con);
     }
 }
 
-// Fetch the recipe data to be edited
+// Fetch the recipie data to be edited
 if (isset($_GET['id'])) {
     $id = mysqli_real_escape_string($con, $_GET['id']);
     $select_query = "SELECT * FROM recipies WHERE recipie_id='$id'";
@@ -45,15 +45,19 @@ if (isset($_GET['id'])) {
         $title = $row['recipie_name'];
         $description = $row['recipie_description'];
         $image = $row['recipie_image'];
-        $category = $row['recipie_category']; // Fetch category from database
+        $category = $row['category_id']; // Fetch category from database
     } else {
-        echo "No recipe found with the given ID.";
+        echo "No recipie found with the given ID.";
         exit();
     }
 } else {
-    echo "No recipe ID provided.";
+    echo "No recipie ID provided.";
     exit();
 }
+
+// Fetch all categories for the dropdown
+$categories_query = "SELECT * FROM categories";
+$categories_result = mysqli_query($con, $categories_query);
 ?>
 
 <!DOCTYPE html>
@@ -61,10 +65,9 @@ if (isset($_GET['id'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Recipe</title>
+    <title>Edit recipie</title>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        
         .container {
             max-width: 600px;
             margin-top: 50px;
@@ -112,12 +115,12 @@ if (isset($_GET['id'])) {
 </head>
 <body>
     <div class="container">
-        <h2 class="mt-4">Edit Recipe</h2>
+        <h2 class="mt-4">Edit recipie</h2>
         <form method="post" enctype="multipart/form-data">
             <input type="hidden" name="id" value="<?php echo $id; ?>">
             <input type="hidden" name="old_image" value="<?php echo $image; ?>">
             <div class="form-group">
-                <label for="title">Recipe Title</label>
+                <label for="title">recipie Title</label>
                 <input type="text" class="form-control" id="title" name="title" value="<?php echo $title; ?>" required>
             </div>
             <div class="form-group">
@@ -126,11 +129,18 @@ if (isset($_GET['id'])) {
             </div>
             <div class="form-group">
                 <label for="category">Choose Category</label>
-                <select name="category" id="category" class="form-control">
+                <select name="category" id="category" class="form-control" required>
                     <option value="">Select Category</option>
-                    <option value="Sausage">Sausage</option>
-                    <option value="Breakfast">Breakfast</option>
-                    <!-- Add more options as needed -->
+                    <?php
+                    if ($categories_result) {
+                        while ($category_row = mysqli_fetch_assoc($categories_result)) {
+                            $category_id = $category_row['category_id'];
+                            $category_name = $category_row['category_name'];
+                            $selected = ($category == $category_id) ? "selected" : "";
+                            echo "<option value='$category_id' $selected>$category_name</option>";
+                        }
+                    }
+                    ?>
                 </select>
             </div>
 
@@ -140,21 +150,11 @@ if (isset($_GET['id'])) {
                 <img src="images/<?php echo $image; ?>" alt="Current Image" style="margin-top: 10px; width: 100px;">
             </div>
 
-            <button type="submit" class="btn btn-primary" name="update">Update Recipe</button>
-            <button type="button" class="btn btn-danger"><a style="color: white;" href="index.php">Cancel</a></button>
+            <button type="submit" class="btn btn-primary" name="update">Update recipie</button>
+            <button type="button" class="btn btn-danger"><a style="color: white;" href="home.php">Cancel</a></button>
         </form>
     </div>
     <br>
     <br>
 </body>
 </html>
-
-
-
-
-
-
-
-
-<style>
-    </style>

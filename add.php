@@ -7,7 +7,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Sanitize and retrieve form data
     $title = mysqli_real_escape_string($con, $_POST['title']);
     $description = mysqli_real_escape_string($con, $_POST['description']);
-    $category = mysqli_real_escape_string($con, $_POST['category']);
+    $category_id = mysqli_real_escape_string($con, $_POST['category']);
 
     // Check if an image is uploaded
     if ($_FILES['image']['name']) {
@@ -16,21 +16,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         // Move the uploaded image to the target directory
         if (move_uploaded_file($_FILES['image']['tmp_name'], $target)) {
             // Insert data into the database with the image
-            $insert_query = "INSERT INTO recipies (recipie_name, recipie_description, recipie_image, recipie_category) 
-                             VALUES ('$title', '$description', '$image', '$category')";
+            $insert_query = "INSERT INTO recipies (recipie_name, recipie_description, recipie_image, category_id)  
+                             VALUES ('$title', '$description', '$image', '$category_id')";
         } else {
             echo "Failed to upload image.";
+            exit();
         }
     } else {
         // Insert data into the database without the image
-        $insert_query = "INSERT INTO recipies (recipie_name, recipie_description, recipie_category) 
-                         VALUES ('$title', '$description', '$category')";
+        $insert_query = "INSERT INTO recipies (recipie_name, recipie_description, category_id) 
+                         VALUES ('$title', '$description', '$category_id')";
     }
 
     // Execute the query if defined
     if (isset($insert_query) && mysqli_query($con, $insert_query)) {
-        // Redirect to index.php after successful insertion
-        header("Location: index.php");
+        // Redirect to home.php after successful insertion
+        header("Location: home.php");
         exit();
     } else {
         echo "Error: " . mysqli_error($con);
@@ -105,19 +106,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </div>
             <div class="form-group">
                 <label for="image">Image</label>
-                <input type="file" class="form-control" id="image" name="image" >
+                <input type="file" class="form-control" id="image" name="image">
             </div>
             <div class="form-group">
+                <?php
+                // Retrieve categories from the database
+                $query = "SELECT * FROM categories";
+                $result = mysqli_query($con, $query);
+                ?>
                 <label for="category">Choose Category</label>
-                <select name="category" id="category" class="form-control">
+                <select name="category" id="category" class="form-control" required>
                     <option value="">Select Category</option>
-                    <option value="Sausage">Sausage</option>
-                    <option value="Breakfast">Breakfast</option>
-                    <!-- Add more options as needed -->
+                    <?php
+                    while ($row = mysqli_fetch_assoc($result)) {
+                        echo "<option value='" . $row['category_id'] . "'>" . $row['category_name'] . "</option>";
+                    }
+                    ?>
                 </select>
             </div>
-            <button type="submit" class="btn btn-primary" href="index.php" >Add Recipe</button>
-            <button type="button" class="btn btn-danger" style="color: white;" ><a style="color: white;" href="index.php">Cancel</a></button>
+            <br>
+
+            <button type="submit" class="btn btn-primary">Add Recipe</button>
+            <button type="button" class="btn btn-danger"><a style="color: white;" href="home.php">Cancel</a></button>
         </form>
     </div>
 </body>

@@ -21,8 +21,8 @@ if (isset($_GET['id'])) {
             if (file_exists("images/" . $image)) {
                 unlink("images/" . $image);
             }
-            // Redirect to index.php after successful deletion
-            header("Location: index.php");
+            // Redirect to home.php after successful deletion
+            header("Location: home.php");
             exit();
         } else {
             echo "Error: " . mysqli_error($con);
