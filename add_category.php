@@ -2,20 +2,32 @@
 // Include the database configuration file
 include('db/config.php');
 
+// Start the session
+session_start();
+
 // Check if the form is submitted
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Sanitize and retrieve form data
     $category_name = mysqli_real_escape_string($con, $_POST['category_name']);
-    // Insert data into the database
-    $insert_query = "INSERT INTO categories (category_name) VALUES ('$category_name')";
 
-    // Execute the query
-    if (mysqli_query($con, $insert_query)) {
-        // Redirect to home.php after successful insertion
-        header("Location: home.php");
-        exit();
+    // Check if category already exists
+    $check_query = "SELECT * FROM categories WHERE category_name = '$category_name'";
+    $check_result = mysqli_query($con, $check_query);
+
+    if (mysqli_num_rows($check_result) > 0) {
+        $error_message = "Category already exists. Please select a different category.";
     } else {
-        echo "Error: " . mysqli_error($con);
+        // Insert data into the database
+        $insert_query = "INSERT INTO categories (category_name) VALUES ('$category_name')";
+
+        // Execute the query
+        if (mysqli_query($con, $insert_query)) {
+            // Redirect to index.php after successful insertion
+            header("Location: index.php");
+            exit();
+        } else {
+            $error_message = "Error: " . mysqli_error($con);
+        }
     }
 }
 ?>
@@ -64,18 +76,34 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             background-color: #0056b3;
             border-color: #004085;
         }
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 1px solid transparent;
+            border-radius: 4px;
+        }
+        .alert-danger {
+            color: #721c24;
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h2 class="mt-4" style="text-align: center;">Add New Category</h2>
+        <?php
+        if (isset($error_message)) {
+            echo "<div class='alert alert-danger'>$error_message</div>";
+        }
+        ?>
         <form method="post">
             <div class="form-group">
                 <label for="category_name">Category Name</label>
                 <input type="text" class="form-control" id="category_name" name="category_name" required>
             </div>
             <button type="submit" class="btn btn-primary">Add Category</button>
-            <button type="button" class="btn btn-danger"><a style="color: white;" href="home.php">Cancel</a></button>
+            <button type="button" class="btn btn-danger"><a style="color: white;" href="index.php">Cancel</a></button>
         </form>
     </div>
 </body>

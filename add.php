@@ -8,6 +8,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $title = mysqli_real_escape_string($con, $_POST['title']);
     $description = mysqli_real_escape_string($con, $_POST['description']);
     $category_id = mysqli_real_escape_string($con, $_POST['category']);
+    
+    // Default image value
+    $default_image = 'default_image.jpg';
 
     // Check if an image is uploaded
     if ($_FILES['image']['name']) {
@@ -15,23 +18,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $target = "images/" . basename($image);
         // Move the uploaded image to the target directory
         if (move_uploaded_file($_FILES['image']['tmp_name'], $target)) {
-            // Insert data into the database with the image
-            $insert_query = "INSERT INTO recipies (recipie_name, recipie_description, recipie_image, category_id)  
-                             VALUES ('$title', '$description', '$image', '$category_id')";
+            // Use uploaded image
+            $image_to_insert = $image;
         } else {
             echo "Failed to upload image.";
             exit();
         }
     } else {
-        // Insert data into the database without the image
-        $insert_query = "INSERT INTO recipies (recipie_name, recipie_description, category_id) 
-                         VALUES ('$title', '$description', '$category_id')";
+        // Use default image
+        $image_to_insert = $default_image;
     }
 
+    // Insert data into the database with or without the image
+    $insert_query = "INSERT INTO recipies (recipie_name, recipie_description, recipie_image, category_id)  
+                     VALUES ('$title', '$description', '$image_to_insert', '$category_id')";
+
     // Execute the query if defined
-    if (isset($insert_query) && mysqli_query($con, $insert_query)) {
-        // Redirect to home.php after successful insertion
-        header("Location: home.php");
+    if (mysqli_query($con, $insert_query)) {
+        // Redirect to index.php after successful insertion
+        header("Location: index.php");
         exit();
     } else {
         echo "Error: " . mysqli_error($con);
@@ -94,7 +99,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 <body>
     <div class="container">
-        <h2 class="mt-4" style="text-align: center;" >Add New Recipe</h2>
+        <h2 class="mt-4" style="text-align: center;">Add New Recipe</h2>
         <form method="post" enctype="multipart/form-data">
             <div class="form-group">
                 <label for="title">Recipe Title</label>
@@ -125,9 +130,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 </select>
             </div>
             <br>
-
             <button type="submit" class="btn btn-primary">Add Recipe</button>
-            <button type="button" class="btn btn-danger"><a style="color: white;" href="home.php">Cancel</a></button>
+            <button type="button" class="btn btn-danger"><a style="color: white;" href="index.php">Cancel</a></button>
         </form>
     </div>
 </body>
