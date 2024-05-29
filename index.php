@@ -1,5 +1,4 @@
 <?php
-
 include "db/config.php";
 
 // Handle "Add" button redirection
@@ -15,16 +14,15 @@ $categories_result = mysqli_query($con, $categories_query);
 // Initialize select query
 $select_query = "SELECT * FROM recipies, categories WHERE recipies.category_id = categories.category_id";
 
-// Adjust query based on the selected category button
+// Adjust query based on the selected category button or URL parameter
 if (isset($_POST['view_all'])) {
     $select_query = "SELECT * FROM recipies";
-} elseif (isset($_POST['category_id'])) {
-    $category_id = $_POST['category_id'];
+} elseif (isset($_GET['category_id'])) {
+    $category_id = $_GET['category_id'];
     $select_query = "SELECT * FROM recipies, categories WHERE recipies.category_id = categories.category_id AND categories.category_id = '$category_id'";
 }
 
 $result = mysqli_query($con, $select_query);
-
 ?>
 
 <!DOCTYPE html>
@@ -67,15 +65,15 @@ $result = mysqli_query($con, $select_query);
 
         .add-button-container {
             margin-top: 20px;
-            text-align: center;
             display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 10px;
+            flex-wrap: wrap;
+            justify-content:center;
+            gap: 7px;
         }
 
         .add-button-container button {
-            width: 100%;
+            flex: 1;
+            min-width: 150px;
             max-width: 200px;
         }
 
@@ -90,20 +88,30 @@ $result = mysqli_query($con, $select_query);
             white-space: pre-wrap; /* This property ensures that whitespace is preserved and text wraps when necessary */
         }
     </style>
+    <script>
+        function confirmDelete(url) {
+            if (confirm("Are you sure you want to delete this recipe?")) {
+                window.location.href = url;
+            }
+        }
+    </script>
 </head>
 <body>
     <form method="post">
         <div class="add-button-container">
-            <button class="btn btn-primary" type="submit" name="add">Add</button>
+            <button class="btn btn-primary" type="submit" name="add">Add Recipe</button>
             <button class="btn btn-danger" type="button"><a style="color: white;" href="add_category.php">Add Category</a></button>
             <button class="btn btn-primary" style="background-color: cadetblue;" type="submit" name="view_all">View All Recipes</button>
+            <button class="btn btn-danger" style="background-color: burlywood;" type="button"><a style="color: white;" href="edit_categories.php">Edit Categories</a></button>
+            <button class="btn btn-info" type="button"><a style="color: white;" href="view_categories.php">Categories</a></button>
+
             <?php
             // Dynamically create buttons for each category
             if ($categories_result) {
                 while ($category_row = mysqli_fetch_assoc($categories_result)) {
                     $category_id = $category_row['category_id'];
                     $category_name = $category_row['category_name'];
-                    echo "<button class='btn btn-primary' type='submit' style='background-color:grey;' name='category_id' value='$category_id'>View Category: <b> $category_name </b> </button>";
+                    // echo "<button class='btn btn-primary' type='submit' style='background-color:grey;' name='category_id' value='$category_id'>View Category: <b> $category_name </b> </button>";
                 }
             }
             ?>
@@ -121,7 +129,7 @@ $result = mysqli_query($con, $select_query);
                     $image = $row['recipie_image'];
                     $category_id = $row['category_id'];
 
-                    //fetch category name
+                    // Fetch category name
                     $category_query = "SELECT category_name FROM categories WHERE category_id = '$category_id'";
                     $category_result = mysqli_query($con, $category_query);
                     $category_row = mysqli_fetch_assoc($category_result);
@@ -131,18 +139,18 @@ $result = mysqli_query($con, $select_query);
                         <div class="custom-card">
                             <img src="images/<?php echo $image; ?>" alt="Image">
                             <div class="title"><?php echo $title; ?></div>
-                            <div class="description"><b style="font-size: 15px;">Description:</b> <?php echo $description; ?></div>
+                            <div class="description"><b style="font-size: 15px;"></b> <?php echo $description; ?></div>
                             <div class="category"><b style="font-size: 13px;">Category:</b> <?php echo $category_name; ?></div>
                             <div class="btn-container">
                                 <a href="edit.php?id=<?php echo $id; ?>" class="btn btn-primary btn-edit">View and Edit</a>
-                                <a href="delete.php?id=<?php echo $id; ?>" class="btn btn-danger">Delete</a>
+                                <button class="btn btn-danger" onclick="confirmDelete('delete.php?id=<?php echo $id; ?>')">Delete</button>
                             </div>
                         </div>
                     </div>
                     <?php
                 }
             } else {
-                echo "No recipies found.";
+                echo "No recipes found.";
             }
             ?>
         </div>
