@@ -38,6 +38,12 @@ $result = mysqli_query($con, $select_query);
             padding: 10px;
             text-align: center;
             margin-bottom: 20px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .custom-card:hover {
+            transform: scale(1.02);
         }
 
         .custom-card img {
@@ -86,6 +92,11 @@ $result = mysqli_query($con, $select_query);
         .description {
             margin-bottom: 1.5rem;
             white-space: pre-wrap; /* This property ensures that whitespace is preserved and text wraps when necessary */
+        }
+
+        .custom-card a {
+            color: inherit;
+            text-decoration: none;
         }
     </style>
     <script>
@@ -136,16 +147,18 @@ $result = mysqli_query($con, $select_query);
                     $category_name = $category_row['category_name'];
                     ?>
                     <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
-                        <div class="custom-card">
-                            <img src="images/<?php echo $image; ?>" alt="Image">
-                            <div class="title"><?php echo $title; ?></div>
-                            <div class="description"><b style="font-size: 15px;"></b> <?php echo $description; ?></div>
-                            <div class="category"><b style="font-size: 13px;">Category:</b> <?php echo $category_name; ?></div>
-                            <div class="btn-container">
-                                <a href="edit.php?id=<?php echo $id; ?>" class="btn btn-primary btn-edit">View and Edit</a>
-                                <button class="btn btn-danger" onclick="confirmDelete('delete.php?id=<?php echo $id; ?>')">Delete</button>
+                        <a href="edit.php?id=<?php echo $id; ?>">
+                            <div class="custom-card">
+                                <img src="images/<?php echo $image; ?>" alt="Image">
+                                <div class="title"><?php echo $title; ?></div>
+                                <div class="description"><b style="font-size: 15px;"></b> <?php echo $description; ?></div>
+                                <div class="category"><b style="font-size: 13px;">Category:</b> <?php echo $category_name; ?></div>
+                                <div class="btn-container">
+                                    <a href="edit.php?id=<?php echo $id; ?>" style="color: white" class="btn btn-primary btn-edit">View and Edit</a>
+                                    <button class="btn btn-danger" onclick="confirmDelete('delete.php?id=<?php echo $id; ?>')">Delete</button>
+                                </div>
                             </div>
-                        </div>
+                        </a>
                     </div>
                     <?php
                 }
