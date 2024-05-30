@@ -32,13 +32,13 @@ $result = mysqli_query($con, $query);
                 while ($row = mysqli_fetch_assoc($result)) {
                     $category_id = $row['category_id'];
                     $category_name = $row['category_name'];
-                    echo "<button class='btn btn-primary btn-category' onclick=\"window.location.href='index.php?category_id=$category_id'\">$category_name</button>";
+                    echo "<button class='btn btn-primary btn-category' onclick=\"window.location.href='home.php?category_id=$category_id'\">$category_name</button>";
                 }
             }
             ?>
         </div>
         <div class="text-center mt-4">
-            <a href="index.php" class="btn btn-secondary">Back</a>
+            <a href="home.php" class="btn btn-secondary">Back</a>
         </div>
     </div>
 </body>

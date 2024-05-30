@@ -27,8 +27,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update'])) {
     $update_query = "UPDATE recipies SET recipie_name='$title', recipie_description='$description', recipie_image='$image', category_id='$category' WHERE recipie_id='$id'";
 
     if (mysqli_query($con, $update_query)) {
-        // Redirect to index.php after successful update
-        header("Location: index.php");
+        // Redirect to home.php after successful update
+        header("Location: home.php");
         exit();
     } else {
         echo "Error: " . mysqli_error($con);
@@ -151,7 +151,7 @@ $categories_result = mysqli_query($con, $categories_query);
             </div>
 
             <button type="submit" class="btn btn-primary" name="update">Update recipie</button>
-            <button type="button" class="btn btn-danger"><a style="color: white;" href="index.php">Cancel</a></button>
+            <button type="button" class="btn btn-danger"><a style="color: white;" href="home.php">Cancel</a></button>
         </form>
     </div>
     <br>

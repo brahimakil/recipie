@@ -30,9 +30,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     }
 
-    // If there's no error, redirect to index.php after successful update
+    // If there's no error, redirect to home.php after successful update
     if (empty($error_message)) {
-        header("Location: index.php");
+        header("Location: home.php");
         exit();
     }
 }
@@ -104,7 +104,7 @@ $result = mysqli_query($con, $query);
                 </div>
             <?php } ?>
             <button type="submit" class="btn btn-primary">Save Changes</button>
-            <button type="button" class="btn btn-danger"><a style="color: white;" href="index.php">Cancel</a></button>
+            <button type="button" class="btn btn-danger"><a style="color: white;" href="home.php">Cancel</a></button>
         </form>
     </div>
 </body>

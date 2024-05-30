@@ -35,8 +35,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     // Execute the query if defined
     if (mysqli_query($con, $insert_query)) {
-        // Redirect to index.php after successful insertion
-        header("Location: index.php");
+        // Redirect to home.php after successful insertion
+        header("Location: home.php");
         exit();
     } else {
         echo "Error: " . mysqli_error($con);
@@ -131,7 +131,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </div>
             <br>
             <button type="submit" class="btn btn-primary">Add Recipe</button>
-            <button type="button" class="btn btn-danger"><a style="color: white;" href="index.php">Cancel</a></button>
+            <button type="button" class="btn btn-danger"><a style="color: white;" href="home.php">Cancel</a></button>
         </form>
     </div>
 </body>
