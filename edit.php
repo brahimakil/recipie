@@ -1,6 +1,15 @@
 <?php
 // Include the database configuration file
+session_start();
 include('db/config.php');
+//check if user is logged in
+if (!isset($_SESSION['email'])) {
+    header("Location: index.php");
+    exit();
+}
+
+//get user id from session
+$user_id = $_SESSION['user_id'];
 
 // Check if the edit form is submitted
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update'])) {
@@ -24,7 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update'])) {
     }
 
     // Update data in the database
-    $update_query = "UPDATE recipies SET recipie_name='$title', recipie_description='$description', recipie_image='$image', category_id='$category' WHERE recipie_id='$id'";
+    $update_query = "UPDATE recipies SET recipie_name='$title', recipie_description='$description', recipie_image='$image', category_id='$category' WHERE recipie_id='$id' AND user_id = '$user_id'";
 
     if (mysqli_query($con, $update_query)) {
         // Redirect to home.php after successful update
@@ -35,10 +44,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update'])) {
     }
 }
 
-// Fetch the recipie data to be edited
+// Fetch the recipe data to be edited
 if (isset($_GET['id'])) {
     $id = mysqli_real_escape_string($con, $_GET['id']);
-    $select_query = "SELECT * FROM recipies WHERE recipie_id='$id'";
+    $select_query = "SELECT * FROM recipies WHERE recipie_id='$id' AND user_id = '$user_id'";
     $result = mysqli_query($con, $select_query);
     if (mysqli_num_rows($result) > 0) {
         $row = mysqli_fetch_assoc($result);
@@ -47,16 +56,16 @@ if (isset($_GET['id'])) {
         $image = $row['recipie_image'];
         $category = $row['category_id']; // Fetch category from database
     } else {
-        echo "No recipie found with the given ID.";
+        echo "No recipe found with the given ID.";
         exit();
     }
 } else {
-    echo "No recipie ID provided.";
+    echo "No recipe ID provided.";
     exit();
 }
 
 // Fetch all categories for the dropdown
-$categories_query = "SELECT * FROM categories";
+$categories_query = "SELECT * FROM categories where user_id = '$user_id'";
 $categories_result = mysqli_query($con, $categories_query);
 ?>
 
@@ -65,7 +74,7 @@ $categories_result = mysqli_query($con, $categories_query);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit recipie</title>
+    <title>Edit Recipe</title>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         .container {
@@ -115,12 +124,12 @@ $categories_result = mysqli_query($con, $categories_query);
 </head>
 <body>
     <div class="container">
-        <h2 class="mt-4">Edit recipie</h2>
+        <h2 class="mt-4">Edit Recipe</h2>
         <form method="post" enctype="multipart/form-data">
             <input type="hidden" name="id" value="<?php echo $id; ?>">
             <input type="hidden" name="old_image" value="<?php echo $image; ?>">
             <div class="form-group">
-                <label for="title">recipie Title</label>
+                <label for="title">Recipe Title</label>
                 <input type="text" class="form-control" id="title" name="title" value="<?php echo $title; ?>" required>
             </div>
             <div class="form-group">
@@ -150,7 +159,7 @@ $categories_result = mysqli_query($con, $categories_query);
                 <img src="images/<?php echo $image; ?>" alt="Current Image" style="margin-top: 10px; width: 100px;">
             </div>
 
-            <button type="submit" class="btn btn-primary" name="update">Update recipie</button>
+            <button type="submit" class="btn btn-primary" name="update">Update Recipe</button>
             <button type="button" class="btn btn-danger"><a style="color: white;" href="home.php">Cancel</a></button>
         </form>
     </div>

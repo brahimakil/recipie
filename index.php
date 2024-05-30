@@ -2,32 +2,28 @@
 session_start();
 include "db/config.php";
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+if (isset($_POST['submit'])) {
     $email = mysqli_real_escape_string($con, $_POST['email']);
     $password = mysqli_real_escape_string($con, $_POST['password']);
-    
-    // Fetch user details from the database
-    $sql = "SELECT * FROM users WHERE user_email = '$email'";
-    $result = mysqli_query($con, $sql);
-    
-    if (mysqli_num_rows($result) > 0) {
-        $user = mysqli_fetch_assoc($result);
-        
-        // Verify the password
-        if (password_verify($password, $user['user_password'])) {
-            // Set session variables
-            $_SESSION['user_id'] = $user['user_id'];
-            $_SESSION['email'] = $user['user_email'];
-            $_SESSION['name'] = $user['user_name'];
-            
-            // Redirect to the dashboard or homepage
-            header("Location: home.php");
-            exit();
-        } else {
-            $error_message = "Incorrect password. Please try again.";
-        }
+
+    // Fetch the user details from the database
+    $result = mysqli_query($con, "SELECT * FROM users WHERE user_email='$email'") or die("Select Error");
+    $row = mysqli_fetch_assoc($result);
+
+    // Check if user exists and the password is correct
+    if ($row && password_verify($password, $row['user_password'])) {
+        // Set session variables
+        $_SESSION['email'] = $row['user_email'];
+        $_SESSION['username'] = $row['user_name'];
+        $_SESSION['user_image'] = $row['user_image'];
+        $_SESSION['user_id'] = $row['user_id'];
+
+        // Redirect to home page
+        header("Location: home.php");
+        exit();
     } else {
-        $error_message = "No account found with that email. Please sign up.";
+        // Error message for invalid credentials
+        $error_message = "Invalid email or password. Please try again.";
     }
 }
 ?>
@@ -63,7 +59,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <div class="row justify-content-center">
             <div class="col-12 col-md-8 col-lg-6">
                 <div class="login-container">
-                    <h2 class="text-center">Login</h2>
+                    
+                    <h2 class="text-center">Welcome to bob's recipes app , log in here </h2>
                     
                     <?php if (isset($error_message)): ?>
                         <div class="alert alert-danger">
@@ -80,7 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             <label for="password">Password</label>
                             <input type="password" class="form-control" id="password" name="password" required>
                         </div>
-                        <button type="submit" class="btn btn-primary btn-block">Login</button>
+                        <button type="submit" class="btn btn-primary btn-block" name="submit">Login</button>
                     </form>
                     <p class="text-center mt-3">Don't have an account? <a href="signup.php">Sign Up</a></p>
                 </div>

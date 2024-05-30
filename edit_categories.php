@@ -1,9 +1,18 @@
 <?php
 // Include the database configuration file
 include('db/config.php');
+session_start();
+// Check if user is logged in
+if (!isset($_SESSION['email'])) {
+    header("Location: index.php");
+    exit();
+}
+
+// Get the user_id from session
+$user_id = $_SESSION['user_id'];
 
 // Retrieve categories from the database
-$query = "SELECT * FROM categories";
+$query = "SELECT * FROM categories WHERE user_id = '$user_id'";
 $result = mysqli_query($con, $query);
 
 // Check if the form is submitted
@@ -16,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $category_name = mysqli_real_escape_string($con, $_POST["category_name_$category_id"]);
         
         // Check if the category name already exists (excluding the current category)
-        $check_query = "SELECT * FROM categories WHERE category_name = '$category_name' AND category_id != '$category_id'";
+        $check_query = "SELECT * FROM categories WHERE category_name = '$category_name' AND category_id != '$category_id' AND user_id = '$user_id'";
         $check_result = mysqli_query($con, $check_query);
 
         if (mysqli_num_rows($check_result) > 0) {
@@ -25,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             break;
         } else {
             // Update the category in the database
-            $update_query = "UPDATE categories SET category_name = '$category_name' WHERE category_id = '$category_id'";
+            $update_query = "UPDATE categories SET category_name = '$category_name' WHERE category_id = '$category_id' AND user_id = '$user_id'";
             mysqli_query($con, $update_query);
         }
     }

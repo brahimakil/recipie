@@ -1,13 +1,22 @@
 <?php
 // Include the database configuration file
+session_start();
 include('db/config.php');
+
+if (!isset($_SESSION['email'])) {
+    header("Location: index.php");
+    exit();
+}
+
+// get the user_id from session
+$user_id = $_SESSION['user_id'];
 
 if (isset($_GET['id'])) {
     // Sanitize and retrieve the recipe ID from the GET request
     $id = mysqli_real_escape_string($con, $_GET['id']);
 
     // Get the image file name to delete the image file from the server
-    $select_query = "SELECT recipie_image FROM recipies WHERE recipie_id='$id'";
+    $select_query = "SELECT recipie_image FROM recipies WHERE recipie_id='$id' AND user_id = '$user_id'";
     $result = mysqli_query($con, $select_query);
     
     if (mysqli_num_rows($result) > 0) {
@@ -15,7 +24,7 @@ if (isset($_GET['id'])) {
         $image = $row['recipie_image'];
         
         // Delete the recipe from the database
-        $delete_query = "DELETE FROM recipies WHERE recipie_id='$id'";
+        $delete_query = "DELETE FROM recipies WHERE recipie_id='$id' AND user_id = '$user_id'";
         if (mysqli_query($con, $delete_query)) {
             // Delete the image file from the server
             if (file_exists("images/" . $image)) {

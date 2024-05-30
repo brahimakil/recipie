@@ -1,24 +1,31 @@
 <?php
 // Include the database configuration file
+session_start();
 include('db/config.php');
 
-// Start the session
-session_start();
+// Check if user is logged in
+if (!isset($_SESSION['email'])) {
+    header("Location: index.php");
+    exit();
+}
+
+// Get the user_id from session
+$user_id = $_SESSION['user_id'];
 
 // Check if the form is submitted
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Sanitize and retrieve form data
     $category_name = mysqli_real_escape_string($con, $_POST['category_name']);
 
-    // Check if category already exists
-    $check_query = "SELECT * FROM categories WHERE category_name = '$category_name'";
+    // Check if category already exists for this user
+    $check_query = "SELECT * FROM categories WHERE category_name = '$category_name' AND user_id = '$user_id'";
     $check_result = mysqli_query($con, $check_query);
 
     if (mysqli_num_rows($check_result) > 0) {
         $error_message = "Category already exists. Please select a different category.";
     } else {
         // Insert data into the database
-        $insert_query = "INSERT INTO categories (category_name) VALUES ('$category_name')";
+        $insert_query = "INSERT INTO categories (category_name, user_id) VALUES ('$category_name', '$user_id')";
 
         // Execute the query
         if (mysqli_query($con, $insert_query)) {

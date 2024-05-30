@@ -1,8 +1,18 @@
 <?php
 include 'db/config.php';
+session_start();
 
-// Fetch all categories from the database
-$query = "SELECT * FROM categories";
+// Check if user is logged in
+if (!isset($_SESSION['email']) ) {
+    header("Location: index.php");
+    exit();
+}
+
+// Get the user_id from session
+$user_id = $_SESSION['user_id'];
+
+// Fetch all categories belonging to the logged-in user from the database
+$query = "SELECT * FROM categories WHERE user_id = '$user_id'";
 $result = mysqli_query($con, $query);
 ?>
 
@@ -34,6 +44,8 @@ $result = mysqli_query($con, $query);
                     $category_name = $row['category_name'];
                     echo "<button class='btn btn-primary btn-category' onclick=\"window.location.href='home.php?category_id=$category_id'\">$category_name</button>";
                 }
+            } else {
+                echo "<p>No categories found.</p>";
             }
             ?>
         </div>

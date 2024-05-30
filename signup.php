@@ -1,5 +1,4 @@
 <?php
-session_start();  // Start the session
 include "db/config.php";
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -19,19 +18,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         
         $sql = "INSERT INTO users (user_name, user_email, user_password) VALUES ('$username', '$email', '$password_hash')";
         
+          
         if (mysqli_query($con, $sql)) {
-            // Set session variables
-            $user_id = mysqli_insert_id($con);  // Get the ID of the newly created user
-            $_SESSION['user_id'] = $user_id;
-            $_SESSION['username'] = $username;
-            $_SESSION['email'] = $email;
+            $success_message = "Registration successful! Redirecting to login ...";
+            header("Refresh: 1; url=index.php");
             
-            // Redirect to the home page
-            header("Location: home.php");
-            exit();
+              // Redirect to the dashboard or homepage
+              exit();
         } else {
             $error_message = "Error: " . $sql . "<br>" . mysqli_error($con);
         }
+    
     }
 }
 ?>
@@ -67,11 +64,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <div class="row justify-content-center">
             <div class="col-12 col-md-8 col-lg-6">
                 <div class="signup-container">
-                    <h2 class="text-center">Sign Up</h2>
+                    <h2 class="text-center">Welcome to bob's recipes app , Sign up here </h2>
                     
                     <?php if (isset($error_message)): ?>
                         <div class="alert alert-danger">
                             <?php echo $error_message; ?>
+                        </div>
+                    <?php endif; ?>
+                    
+                    <?php if (isset($success_message)): ?>
+                        <div class="alert alert-success">
+                            <?php echo $success_message; ?>
                         </div>
                     <?php endif; ?>
                     

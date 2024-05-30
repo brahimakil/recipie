@@ -2,6 +2,16 @@
 // Include the database configuration file
 include('db/config.php');
 
+session_start();
+// Check if user is logged in
+if (!isset($_SESSION['email'])) {
+    header("Location: index.php");
+    exit();
+}
+// Get the user_id from session
+$user_id = $_SESSION['user_id'];
+
+
 // Check if the form is submitted
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Sanitize and retrieve form data
@@ -30,8 +40,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     // Insert data into the database with or without the image
-    $insert_query = "INSERT INTO recipies (recipie_name, recipie_description, recipie_image, category_id)  
-                     VALUES ('$title', '$description', '$image_to_insert', '$category_id')";
+    $insert_query = "INSERT INTO recipies (recipie_name, recipie_description, recipie_image, user_id, category_id)  
+                     VALUES ('$title', '$description', '$image_to_insert' , '$user_id', '$category_id')";
 
     // Execute the query if defined
     if (mysqli_query($con, $insert_query)) {
@@ -116,7 +126,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <div class="form-group">
                 <?php
                 // Retrieve categories from the database
-                $query = "SELECT * FROM categories";
+                $query = "SELECT * FROM categories where user_id = '$user_id'";
                 $result = mysqli_query($con, $query);
                 ?>
                 <label for="category">Choose Category</label>
