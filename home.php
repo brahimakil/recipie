@@ -41,6 +41,8 @@ $result = mysqli_query($con, $select_query);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Recipe Saver</title>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    
+
     <style>
         .custom-card {
             border: 1px solid #ddd;

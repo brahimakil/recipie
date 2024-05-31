@@ -1,6 +1,13 @@
 <?php
 include "db/config.php";
 
+session_start();
+//if already logged in redirect to home page
+if (isset($_SESSION['email'])) {
+    header("Location: home.php");
+    exit();
+}
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $username = mysqli_real_escape_string($con, $_POST['username']);
     $email = mysqli_real_escape_string($con, $_POST['email']);

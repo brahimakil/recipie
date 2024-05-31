@@ -76,6 +76,8 @@ $categories_result = mysqli_query($con, $categories_query);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Recipe</title>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    
+
     <style>
         .container {
             max-width: 600px;
