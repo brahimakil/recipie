@@ -120,12 +120,14 @@ $result = mysqli_query($con, $select_query);
 </head>
 <body>
     <form method="post">
+        <h1 style="text-align: center; margin-top: 20px " >Recipe Saver</h1>
         <div class="add-button-container">
             <button class="btn btn-primary"  type="submit" name="add">Add Recipe</button>
             <button class="btn btn-danger" type="button"><a style="color: white;" href="add_category.php">Add Category</a></button>
             <button class="btn btn-primary" style="background-color: cadetblue;" type="submit" name="view_all">View All Recipes</button>
             <button class="btn btn-danger" style="background-color: burlywood;" type="button"><a style="color: white;" href="edit_categories.php">Edit Categories</a></button>
             <button class="btn btn-info" type="button"><a style="color: white;" href="view_categories.php">Categories</a></button>
+            <button class="btn btn-danger" style="background-color: green;" type="button"><a style="color: white;" href="livepanel.php">Live Panel</a></button>
             <!-- logout button -->
             <button class="btn btn-danger" style="color: white;"  type="button" name="logout" value="logout"  ><a style="color: white;" href="logout.php">Logout</a></button>
             <?php
