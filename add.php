@@ -2,15 +2,16 @@
 // Include the database configuration file
 include('db/config.php');
 
-session_start();
-// Check if user is logged in
-if (!isset($_SESSION['email'])) {
+// Check if user is logged in using cookies
+if (!isset($_COOKIE['email'])) {
     header("Location: index.php");
     exit();
 }
-// Get the user_id from session
-$user_id = $_SESSION['user_id'];
 
+session_start();
+
+// Get the user_id from cookies
+$user_id = $_COOKIE['user_id'];
 
 // Check if the form is submitted
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -62,7 +63,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <title>Add Recipe</title>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     
-
     <style>
         .container {
             max-width: 600px;

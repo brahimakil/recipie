@@ -2,14 +2,15 @@
 // Include the database configuration file
 session_start();
 include('db/config.php');
-//check if user is logged in
-if (!isset($_SESSION['email'])) {
+
+// Check if user is logged in using cookies
+if (!isset($_COOKIE['email'])) {
     header("Location: index.php");
     exit();
 }
 
-//get user id from session
-$user_id = $_SESSION['user_id'];
+// Retrieve user_id from cookies
+$user_id = $_COOKIE['user_id'];
 
 // Check if the edit form is submitted
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update'])) {
@@ -76,8 +77,6 @@ $categories_result = mysqli_query($con, $categories_query);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Recipe</title>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    
-
     <style>
         .container {
             max-width: 600px;

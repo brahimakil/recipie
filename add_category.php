@@ -1,16 +1,15 @@
 <?php
 // Include the database configuration file
-session_start();
 include('db/config.php');
 
-// Check if user is logged in
-if (!isset($_SESSION['email'])) {
+// Check if user is logged in using cookies
+if (!isset($_COOKIE['email'])) {
     header("Location: index.php");
     exit();
 }
 
-// Get the user_id from session
-$user_id = $_SESSION['user_id'];
+// Get the user_id from cookies
+$user_id = $_COOKIE['user_id'];
 
 // Check if the form is submitted
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {

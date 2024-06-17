@@ -2,8 +2,8 @@
 session_start();
 include "db/config.php";
 
-//if already logged in redirect to home page
-if (isset($_SESSION['email'])) {
+// If already logged in, redirect to home page
+if (isset($_COOKIE['email'])) {
     header("Location: home.php");
     exit();
 }
@@ -18,11 +18,11 @@ if (isset($_POST['submit'])) {
 
     // Check if user exists and the password is correct
     if ($row && password_verify($password, $row['user_password'])) {
-        // Set session variables
-        $_SESSION['email'] = $row['user_email'];
-        $_SESSION['username'] = $row['user_name'];
-        $_SESSION['user_image'] = $row['user_image'];
-        $_SESSION['user_id'] = $row['user_id'];
+        // Set cookies
+        setcookie('email', $row['user_email'], time() + (86400 * 30), "/"); // 30 days expiration
+        setcookie('username', $row['user_name'], time() + (86400 * 30), "/");
+        setcookie('user_image', $row['user_image'], time() + (86400 * 30), "/");
+        setcookie('user_id', $row['user_id'], time() + (86400 * 30), "/");
 
         // Redirect to home page
         header("Location: home.php");
@@ -65,8 +65,7 @@ if (isset($_POST['submit'])) {
         <div class="row justify-content-center">
             <div class="col-12 col-md-8 col-lg-6">
                 <div class="login-container">
-                    
-                    <h2 class="text-center">Welcome to bob's recipes app , log in here </h2>
+                    <h2 class="text-center">Welcome to bob's recipes app, log in here</h2>
                     
                     <?php if (isset($error_message)): ?>
                         <div class="alert alert-danger">

@@ -1,9 +1,8 @@
 <?php
 include "db/config.php";
 
-session_start();
-//if already logged in redirect to home page
-if (isset($_SESSION['email'])) {
+// Check if user is already logged in using cookies
+if (isset($_COOKIE['email'])) {
     header("Location: home.php");
     exit();
 }
@@ -25,17 +24,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         
         $sql = "INSERT INTO users (user_name, user_email, user_password) VALUES ('$username', '$email', '$password_hash')";
         
-          
         if (mysqli_query($con, $sql)) {
-            $success_message = "Registration successful! Redirecting to login ...";
-            header("Refresh: 1; url=index.php");
-            
-              // Redirect to the dashboard or homepage
-              exit();
+            // Retrieve the user_id after insertion
+            $user_id = mysqli_insert_id($con);
+
+            // Set cookies
+            setcookie('email', $email, time() + (86400 * 30), "/");
+            setcookie('username', $username, time() + (86400 * 30), "/");
+            setcookie('user_image', '', time() + (86400 * 30), "/");
+            setcookie('user_id', $user_id, time() + (86400 * 30), "/");
+
+            // Redirect after registration
+            $success_message = "Registration successful! Redirecting to home ...";
+            header("Refresh: 0; url=home.php");
+            exit();
         } else {
             $error_message = "Error: " . $sql . "<br>" . mysqli_error($con);
         }
-    
     }
 }
 ?>
@@ -71,7 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <div class="row justify-content-center">
             <div class="col-12 col-md-8 col-lg-6">
                 <div class="signup-container">
-                    <h2 class="text-center">Welcome to bob's recipes app , Sign up here </h2>
+                    <h2 class="text-center">Welcome to Bob's Recipes App, Sign up here</h2>
                     
                     <?php if (isset($error_message)): ?>
                         <div class="alert alert-danger">

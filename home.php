@@ -1,14 +1,14 @@
 <?php
 include "db/config.php";
 
-//check if user is logged in
-session_start();
-if (!isset($_SESSION['email'])) {
+// Check if user is logged in using cookies
+if (!isset($_COOKIE['email'])) {
     header("Location: index.php");
     exit();
 }
-$user_id = $_SESSION['user_id'];
 
+// Retrieve user details from cookies
+$user_id = $_COOKIE['user_id'];
 
 // Handle "Add" button redirection
 if (isset($_POST['add'])) {
@@ -17,18 +17,18 @@ if (isset($_POST['add'])) {
 }
 
 // Fetch all categories from the database
-$categories_query = "SELECT * FROM categories where user_id = '$user_id'";
+$categories_query = "SELECT * FROM categories WHERE user_id = '$user_id'";
 $categories_result = mysqli_query($con, $categories_query);
 
 // Initialize select query
-$select_query = "SELECT * FROM recipies, categories WHERE recipies.category_id = categories.category_id and recipies.user_id = '$user_id'";
+$select_query = "SELECT * FROM recipies, categories WHERE recipies.category_id = categories.category_id AND recipies.user_id = '$user_id'";
 
 // Adjust query based on the selected category button or URL parameter
 if (isset($_POST['view_all'])) {
     $select_query = "SELECT * FROM recipies WHERE user_id = '$user_id'";
 } elseif (isset($_GET['category_id'])) {
     $category_id = $_GET['category_id'];
-    $select_query = "SELECT * FROM recipies, categories WHERE recipies.category_id = categories.category_id AND categories.category_id = '$category_id' AND recipies.user_id = '$user_id' And recipies.user_id = '$user_id'";
+    $select_query = "SELECT * FROM recipies, categories WHERE recipies.category_id = categories.category_id AND categories.category_id = '$category_id' AND recipies.user_id = '$user_id'";
 }
 
 $result = mysqli_query($con, $select_query);
@@ -41,8 +41,6 @@ $result = mysqli_query($con, $select_query);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Recipe Saver</title>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    
-
     <style>
         .custom-card {
             border: 1px solid #ddd;
@@ -84,7 +82,7 @@ $result = mysqli_query($con, $select_query);
             margin-top: 20px;
             display: flex;
             flex-wrap: wrap;
-            justify-content:center;
+            justify-content: center;
             gap: 7px;
         }
 
@@ -120,23 +118,23 @@ $result = mysqli_query($con, $select_query);
 </head>
 <body>
     <form method="post">
-        <h1 style="text-align: center; margin-top: 20px " >Recipe Saver</h1>
+        <h1 style="text-align: center; margin-top: 20px">Recipe Saver</h1>
         <div class="add-button-container">
-            <button class="btn btn-primary"  type="submit" name="add">Add Recipe</button>
+            <button class="btn btn-primary" type="submit" name="add">Add Recipe</button>
             <button class="btn btn-danger" type="button"><a style="color: white;" href="add_category.php">Add Category</a></button>
             <button class="btn btn-primary" style="background-color: cadetblue;" type="submit" name="view_all">View All Recipes</button>
             <button class="btn btn-danger" style="background-color: burlywood;" type="button"><a style="color: white;" href="edit_categories.php">Edit Categories</a></button>
             <button class="btn btn-info" type="button"><a style="color: white;" href="view_categories.php">Categories</a></button>
             <button class="btn btn-danger" style="background-color: green;" type="button"><a style="color: white;" href="livepanel.php">Live Panel</a></button>
-            <!-- logout button -->
-            <button class="btn btn-danger" style="color: white;"  type="button" name="logout" value="logout"  ><a style="color: white;" href="logout.php">Logout</a></button>
+            <!-- Logout button -->
+            <button class="btn btn-danger" style="color: white;" type="button" name="logout" value="logout"><a style="color: white;" href="logout.php">Logout</a></button>
             <?php
             // Dynamically create buttons for each category
             if ($categories_result) {
                 while ($category_row = mysqli_fetch_assoc($categories_result)) {
                     $category_id = $category_row['category_id'];
                     $category_name = $category_row['category_name'];
-                    // echo "<button class='btn btn-primary' type='submit' style='background-color:grey;' name='category_id' value='$category_id'>View Category: <b> $category_name </b> </button>";
+                    // echo "<button class='btn btn-primary' type='submit' style='background-color:grey;' name='category_id' value='$category_id'>View Category: <b>$category_name</b></button>";
                 }
             }
             ?>

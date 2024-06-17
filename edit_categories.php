@@ -2,14 +2,15 @@
 // Include the database configuration file
 include('db/config.php');
 session_start();
-// Check if user is logged in
-if (!isset($_SESSION['email'])) {
+
+// Check if user is logged in using cookies
+if (!isset($_COOKIE['email'])) {
     header("Location: index.php");
     exit();
 }
 
-// Get the user_id from session
-$user_id = $_SESSION['user_id'];
+// Retrieve user_id from cookies
+$user_id = $_COOKIE['user_id'];
 
 // Retrieve categories from the database
 $query = "SELECT * FROM categories WHERE user_id = '$user_id'";
@@ -44,10 +45,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         header("Location: home.php");
         exit();
     }
-}
 
-// Re-fetch the categories after potential updates for display
-$result = mysqli_query($con, $query);
+    // Re-fetch the categories after potential updates for display
+    $result = mysqli_query($con, $query);
+}
 ?>
 
 <!DOCTYPE html>
@@ -57,8 +58,6 @@ $result = mysqli_query($con, $query);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Categories</title>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    
-
     <style>
         .container {
             max-width: 800px;
@@ -103,11 +102,11 @@ $result = mysqli_query($con, $query);
         <h2 class="mt-4" style="text-align: center;">Edit Categories</h2>
         
         <form method="post">
-        <?php
-        if (!empty($error_message)) {
-            echo "<div class='alert alert-danger'>$error_message</div>";
-        }
-        ?>
+            <?php
+            if (!empty($error_message)) {
+                echo "<div class='alert alert-danger'>$error_message</div>";
+            }
+            ?>
             <?php while ($row = mysqli_fetch_assoc($result)) { ?>
                 <div class="form-group">
                     <label for="category_name_<?php echo $row['category_id']; ?>">Category Name</label>

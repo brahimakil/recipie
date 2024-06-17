@@ -1,10 +1,9 @@
 <?php
 // Include the database configuration file
-session_start();
 include('db/config.php');
 
-// Check if user is logged in
-if (!isset($_SESSION['email'])) {
+// Check if user is logged in using cookies
+if (!isset($_COOKIE['email'])) {
     header("Location: index.php");
     exit();
 }

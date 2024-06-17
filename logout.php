@@ -1,11 +1,14 @@
 <?php
+// Start session if needed (not needed for cookie-based logout)
+// session_start();
 
-session_start();
+// Unset or expire the cookies
+setcookie('email', '', time() - 3600, '/');
+setcookie('username', '', time() - 3600, '/');
+setcookie('user_image', '', time() - 3600, '/');
+setcookie('user_id', '', time() - 3600, '/');
 
-session_unset();
-// Destroy the session
-session_destroy();
-
-// Redirect to the index page
+// Redirect to the login page
 header("Location: index.php");
 exit();
+?>
